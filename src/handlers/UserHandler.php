@@ -1,0 +1,171 @@
+<?php
+namespace src\handlers;
+
+use \src\models\User;
+use \src\models\UserRelation;
+use \src\handlers\PostHandler;
+
+class UserHandler
+{
+    public static function checkLogin()
+    {
+        if(!empty($_SESSION['token'])) {
+            $token = $_SESSION['token'];
+            $data = User::select()->where('token', $token)->one();
+
+            if($data) {
+                $loggedUser = new User();
+                $loggedUser->id = $data['id'];
+                $loggedUser->name = $data['name'];
+                $loggedUser->avatar = $data['avatar'];
+                
+                return $loggedUser;
+            }
+        }
+
+        return false;
+    }
+
+    public static function verifyLogin($email, $password)
+    {
+        $user = User::select()->where('email', $email)->one();
+        if($user) {
+            if(password_verify($password, $user['password'])) {
+                $token = md5(time().rand(0,9999).time());
+
+                // Update token
+                User::update()
+                    ->set('token', $token)
+                    ->where('email', $email)
+                ->execute();
+
+                return $token;
+            }
+        }
+
+        return false;
+    }
+
+    public static function idExists($id)
+    {
+        $user = User::select()->where('id', $id)->one();
+        return $user ? true : false;
+    }
+
+    public static function emailExists($email)
+    {
+        $user = User::select()->where('email', $email)->one();
+        return $user ? true : false;
+    }
+
+    public static function getUser($id, $full = false)
+    {
+        $data = User::select()
+            ->where('id', $id)
+        ->one(); // Get primary user by id
+
+        if($data)
+        {
+            $user = new User();
+            $user->id = $data['id'];
+            $user->name = $data['name'];
+            $user->birthdate = $data['birthdate'];
+            $user->city = $data['city'];
+            $user->work = $data['work'];
+            $user->avatar = $data['avatar'];
+            $user->cover = $data['cover'];
+
+            // Se o parâmetro $full foi enviado, então retornamos mais informações do usuário.
+            if($full)
+            {
+                $user->followers = [];
+                $user->following = [];
+                $user->photos = [];
+
+                // Lista das pessoas que me seguem [usuário logado]
+                $followers = UserRelation::select()
+                    ->where('user_to', $id)
+                ->get();
+
+                foreach($followers as $key => $follower)
+                {
+                    $userData = User::select()
+                        ->where('id', $follower['user_from'])
+                    ->one();
+                    $newUser = new User();
+                    $newUser->id = $userData['id'];
+                    $newUser->name = $userData['name'];
+                    $newUser->avatar = $userData['avatar'];
+
+                    $user->followers[] = $newUser;
+                }
+
+                // Lista de usuários que estou seguindo
+                $following = UserRelation::select()
+                    ->where('user_from', $id)
+                ->get();
+
+                foreach($following as $key => $following)
+                {
+                    $userData = User::select()
+                        ->where('id', $following['user_to'])
+                    ->one();
+                    $newUser = new User();
+                    $newUser->id = $userData['id'];
+                    $newUser->name = $userData['name'];
+                    $newUser->avatar = $userData['avatar'];
+
+                    $user->following[] = $newUser;
+                }
+
+                // Photos
+                $user->photos = PostHandler::getPhotosFrom($id);
+
+            }
+
+            return $user;
+        }
+
+        return false;
+    }
+
+    public static function addUser($name, $email, $password, $birthdate)
+    {
+        $hash = password_hash($password, PASSWORD_DEFAULT);
+        $token = md5(time().rand().time());
+
+        User::insert([
+            'email' => $email,
+            'name' => $name,
+            'password' => $hash,
+            'birthdate' => $birthdate,
+            'token' => $token
+        ])->execute();
+
+        return $token;
+    }
+
+    // Verificar se o usuário logado segue o usuário $to
+    public static function isFollowing($from, $to)
+    {
+        $data = UserRelation::select()->where('user_from', $from)->where('user_to', $to)->one();
+        return $data ? true : false;
+    }
+
+    public static function follow($from, $to)
+    {
+        UserRelation::insert([
+            'user_from' => $from,
+            'user_to' => $to
+        ])->execute();
+    }
+
+    public static function unfollow($from, $to)
+    {
+        UserRelation::delete()
+            ->where('user_from', $from)
+            ->where('user_to', $to)
+        ->execute();
+    }
+
+}
