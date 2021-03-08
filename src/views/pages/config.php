@@ -5,68 +5,76 @@
 
     <section class="feed mt-10">
 
-        <h1>Configurações</h1>
+        <div class="row">
+            <div class="column pr-5">
 
-        <?php if(!empty($flash)): ?>
-            <div class="flash"><?php echo $flash; ?></div>
-        <?php endif; ?>
+                <h1>Configurações</h1>
 
-        <form class="config-form" method="POST" enctype="multipart/form-data" action="<?=$base;?>/config">
+                <?php if(!empty($flash)): ?>
+                    <div class="flash"><?php echo $flash; ?></div>
+                <?php endif; ?>
 
-            <label>
-                Novo Avatar:<br/>
-                <input type="file" name="avatar" /><br/>
-                <img class="image-edit" src="<?=$base;?>/media/avatars/<?=$user->avatar; ?>" />
-            </label>
+                <form class="config-form" method="POST" enctype="multipart/form-data" action="<?=$base;?>/config">
 
-            <label>
-                Nova Capa:<br/>
-                <input type="file" name="cover" /><br/>
-                <img class="image-edit" src="<?=$base;?>/media/covers/<?=$user->cover; ?>" />
-            </label>
+                    <label>
+                        Novo Avatar:<br/>
+                        <input type="file" name="avatar" /><br/>
+                        <img class="image-edit" src="<?=$base;?>/media/avatars/<?=$user->avatar; ?>" />
+                    </label>
 
-            <hr/>
+                    <label>
+                        Nova Capa:<br/>
+                        <input type="file" name="cover" /><br/>
+                        <img class="image-edit" src="<?=$base;?>/media/covers/<?=$user->cover; ?>" />
+                    </label>
 
-            <label>
-                Nome Completo:<br/>
-                <input type="text" name="name" value="<?=$user->name;?>" />
-            </label>
+                    <hr/>
 
-            <label>
-                Data de nascimento:<br/>
-                <input type="text" name="birthdate" value="<?=date('d/m/Y', strtotime($user->birthdate));?>" />
-            </label>
+                    <label>
+                        Nome Completo:<br/>
+                        <input type="text" name="name" value="<?=$user->name;?>" />
+                    </label>
 
-            <label>
-                E-mail:<br/>
-                <input type="email" name="email" value="<?=$user->email;?>" />
-            </label>
+                    <label>
+                        Data de nascimento:<br/>
+                        <input type="text" name="birthdate" value="<?=date('d/m/Y', strtotime($user->birthdate));?>" />
+                    </label>
 
-            <label>
-                Cidade:<br/>
-                <input type="text" name="city" value="<?=$user->city;?>" />
-            </label>
+                    <label>
+                        E-mail:<br/>
+                        <input type="email" name="email" value="<?=$user->email;?>" />
+                    </label>
 
-            <label>
-                Trabalho:<br/>
-                <input type="text" name="work" value="<?=$user->work;?>" />
-            </label>
+                    <label>
+                        Cidade:<br/>
+                        <input type="text" name="city" value="<?=$user->city;?>" />
+                    </label>
 
-            <hr/>
+                    <label>
+                        Trabalho:<br/>
+                        <input type="text" name="work" value="<?=$user->work;?>" />
+                    </label>
 
-            <label>
-                Nova Senha:<br/>
-                <input type="password" name="password" />
-            </label>
+                    <hr/>
 
-            <label>
-                Confirmar Nova Senha:<br/>
-                <input type="password" name="password_confirm" />
-            </label>
+                    <label>
+                        Nova Senha:<br/>
+                        <input type="password" name="password" />
+                    </label>
 
-            <button class="button">Salvar</button>
+                    <label>
+                        Confirmar Nova Senha:<br/>
+                        <input type="password" name="password_confirm" />
+                    </label>
 
-        </form>
+                    <button class="button">Salvar</button>
+
+                </form>
+            </div>
+            <div class="column side pl-5">
+                <?=$render('right-side');?>
+            </div>
+        </div>
 
     </section>
 

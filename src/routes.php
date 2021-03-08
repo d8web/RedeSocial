@@ -1,5 +1,5 @@
 <?php
-// Continuar da aula: Upload de Fotos (1/3).
+// Continuar da aula: Detalhes do Feed (1/3).
 use core\Router;
 
 $router = new Router();
@@ -13,6 +13,7 @@ $router->get('/cadastro', 'LoginController@signup');
 $router->post('/cadastro', 'LoginController@signupAction');
 
 $router->post('/post/new', 'PostController@new'); // Adicionar post
+$router->get('/post/{id}/delete', 'PostController@delete'); // Deletar post
 
 $router->get('/perfil/{id}/fotos', 'ProfileController@photos');
 $router->get('/perfil/{id}/amigos', 'ProfileController@friends'); // Amigos
@@ -33,3 +34,5 @@ $router->get('/sair', 'LoginController@logout'); // logout
 $router->get('/ajax/like/{id}', 'AjaxController@like');
 
 $router->post('/ajax/comment', 'AjaxController@comment'); // Adicionar comentário
+
+$router->post('/ajax/upload', 'AjaxController@upload'); // Rota upload de fotos do feed

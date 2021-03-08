@@ -154,6 +154,7 @@ class PostHandler
         $photosData = Post::select()
             ->where('id_user', $idUser)
             ->where('type', 'photo')
+            ->orderBy('created_at', 'desc')
         ->get();
 
         $photos = [];
@@ -197,6 +198,37 @@ class PostHandler
             'created_at' => date('Y-m-d H:i:s'),
             'body' => $txt
         ])->execute();
+    }
+
+    public static function deletePost($id, $loggedUserId)
+    {
+        // Verificar se o post existe e se é do usuário logado.
+        $post = Post::select()
+            ->where('id', $id)
+            ->where('id_user', $loggedUserId)
+        ->get();
+
+        if(count($post) > 0) {
+            $post = $post[0];
+            // Deletar os likes e comentários
+            PostLike::delete()->where('id_post', $id)->execute();
+            PostComment::delete()->where('id_post', $id)->execute();
+
+            // Se o tipo do post for foto, deletar o arquivo da pasta media
+            if($post['type'] === 'photo')
+            {
+                // echo __DIR__;
+                $img = __DIR__.'/../../public/media/uploads/'.$post['body'];
+                if(file_exists($img))
+                {
+                    // Delete Image
+                    unlink($img);
+                }
+            }
+
+             // Deletar o post
+             Post::delete()->where('id', $id)->execute();
+        }
     }
 
 }

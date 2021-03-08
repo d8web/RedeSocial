@@ -13,6 +13,7 @@
                     </span>
                 </a>
                 <span class="fidi-action">
+
                     <?php
                         switch($data->type)
                         {
@@ -24,18 +25,38 @@
                             break;
                         }
                     ?>
+
                 </span>
                 <br/>
                 <span class="fidi-date">
                     <?=date('d/m/Y', strtotime($data->created_at));?>
                 </span>
             </div>
-            <div class="feed-item-head-btn">
-                <img src="<?=$base;?>/assets/images/more.png" />
-            </div>
+
+            <?php if($data->mine): ?>
+                <div class="feed-item-head-btn">
+                    <img src="<?=$base;?>/assets/images/more.png" />
+                    <div class="feed-item-more-window">
+                        <a href="<?=$base;?>/post/<?=$data->id;?>/delete">Excluir post</a>
+                    </div>
+                </div>
+            <?php endif; ?>
+
         </div>
         <div class="feed-item-body mt-10 m-width-20">
-            <?=nl2br($data->body);?>
+
+
+            <?php
+                switch($data->type)
+                {
+                    case 'text':
+                        echo nl2br($data->body);
+                    break;
+                    case 'photo':
+                        echo '<img src="'.$base.'/media/uploads/'.$data->body.'"/>';
+                        break;
+                }
+            ?>
         </div>
         <div class="feed-item-buttons row mt-20 m-width-20">
             <div class="like-btn <?=($data->liked?'on':'');?>"><?=$data->likeCount;?></div>
@@ -44,6 +65,7 @@
         <div class="feed-item-comments">
             
             <div class="feed-item-comments-area">
+
                 <?php foreach($data->comments as $item): ?>
                     <div class="fic-item row m-height-10 m-width-20">
                         <div class="fic-item-photo">
@@ -57,6 +79,7 @@
                         </div>
                     </div>
                 <?php endforeach; ?>
+
             </div>
 
             <div class="fic-answer row m-height-10 m-width-20">

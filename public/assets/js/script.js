@@ -45,10 +45,30 @@ document.querySelector('.feed-new-input').addEventListener('blur', function(obj)
     }
 });
 
-if(document.querySelector('.like-btn'))
-{
-    document.querySelectorAll('.like-btn').forEach(item => {
-        item.addEventListener('click', () => {
+
+
+function closeFeedWindow() {
+    document.querySelectorAll('.feed-item-more-window').forEach(item=>{
+        item.style.display = 'none';
+    });
+
+    document.removeEventListener('click', closeFeedWindow);
+}
+
+document.querySelectorAll('.feed-item-head-btn').forEach(item=>{
+    item.addEventListener('click', ()=>{
+        closeFeedWindow();
+        item.querySelector('.feed-item-more-window').style.display = 'block';
+
+        setTimeout(()=>{
+            document.addEventListener('click', closeFeedWindow);
+        }, 500);
+    });
+});
+
+if(document.querySelector('.like-btn')) {
+    document.querySelectorAll('.like-btn').forEach(item=>{
+        item.addEventListener('click', ()=>{
             let id = item.closest('.feed-item').getAttribute('data-id');
             let count = parseInt(item.innerText);
             if(item.classList.contains('on') === false) {
@@ -64,10 +84,9 @@ if(document.querySelector('.like-btn'))
     });
 }
 
-if(document.querySelector('.fic-item-field'))
-{
-    document.querySelectorAll('.fic-item-field').forEach(item => {
-        item.addEventListener('keyup', async (e) => {
+if(document.querySelector('.fic-item-field')) {
+    document.querySelectorAll('.fic-item-field').forEach(item=>{
+        item.addEventListener('keyup', async (e)=>{
             if(e.keyCode == 13) {
                 let id = item.closest('.feed-item').getAttribute('data-id');
                 let txt = item.value;
