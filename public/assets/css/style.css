@@ -291,6 +291,11 @@ header .head-side {
 .profile-info-item {
     text-align: center;
 }
+
+.profile-info-item a {
+    text-decoration: none;
+}
+
 .profile-info-item-n {
     font-weight: bold;
     font-size:20px;
@@ -390,6 +395,7 @@ header .head-side {
 }
 .full-user-photos .user-photo-item {
     margin:0;
+    max-width: 100%;
 }
 
 .feed-pagination {
@@ -435,6 +441,35 @@ header .head-side {
 }
 .button:hover {
     background-color:#477dbb;
+}
+
+.config-form {
+    margin-top:10px;
+}
+.config-form label {
+    display:block;
+    padding:10px 0;
+}
+.config-form input {
+    padding:10px 15px;
+    font-size:14px;
+    width:100%;
+    max-width:500px;
+}
+.config-form .image-edit {
+    max-width: 150px;
+}
+
+.flash {
+    width: 100%;
+    background-color: #dd4b39;
+    color: #fff;
+    font-size: 15px;
+    padding: 10px;
+    margin: 10px 0px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 3px #999;
+    border: 1px solid #d73925;
 }
 
 @media (max-width: 992px) {

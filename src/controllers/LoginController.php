@@ -23,18 +23,20 @@ class LoginController extends Controller
         $email = filter_input(INPUT_POST, 'email', FILTER_VALIDATE_EMAIL);
         $password = filter_input(INPUT_POST, 'password');
 
-        if($email && $password) {
-
+        if($email && $password)
+        {
             $token = UserHandler::verifyLogin($email, $password);
-            if($token) {
+            if($token)
+            {
                 $_SESSION['token'] = $token;
                 $this->redirect('/');
-            } else {
+            } else
+            {
                 $_SESSION['flash'] = 'Email e/ou senha incorretos!';
                 $this->redirect('/login');
             }
-
-        } else {
+        } else
+        {
             $this->redirect('/login');
         }
     }

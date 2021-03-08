@@ -4,6 +4,8 @@ namespace src\handlers;
 use \src\models\Post;
 use \src\models\User;
 use \src\models\UserRelation;
+use \src\models\PostLike;
+use \src\models\PostComment;
 
 class PostHandler
 {
@@ -48,16 +50,37 @@ class PostHandler
             $newPost->user->name = $newUser['name'];
             $newPost->user->avatar = $newUser['avatar'];
 
+            $likes = PostLike::select()->where('id_post', $postItem['id'])->get();
             // TO DO: Prencher informações de like
-            $newPost->likeCount = 0;
-            $newPost->liked = false;
+            $newPost->likeCount = count($likes);
+            $newPost->liked = self::isLiked($postItem['id'], $loggedUserId);
+
             // TO DO: Preencher informações de comments
-            $newPost->comments = [];
+            $newPost->comments = PostComment::select()->where('id_post', $postItem['id'])->get();
+            foreach($newPost->comments as $key => $comment)
+            {
+                // Adicionando informações do usuário que fez o comentário.
+                $newPost->comments[$key]['user'] = User::select()->where('id', $comment['id_user'])->one();
+            }
 
             $posts[] = $newPost;
         }
 
         return $posts;
+    }
+
+    public static function isLiked($id, $loggedUserId)
+    {
+        $myLike = PostLike::select()
+            ->where('id_post', $id)
+            ->where('id_user', $loggedUserId)
+        ->get();
+
+        if(count($myLike) > 0) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public static function getUserFeed($idUser, $page, $loggedUserId)
@@ -147,6 +170,33 @@ class PostHandler
 
         return $photos;
 
+    }
+
+    public static function deleteLike($idPost, $loggedUserId)
+    {
+        PostLike::delete()
+            ->where('id_post', $idPost)
+            ->where('id_user', $loggedUserId)
+        ->execute();
+    }
+
+    public static function insertLike($idPost, $loggedUserId)
+    {
+        PostLike::insert([
+            'id_post' => $idPost,
+            'id_user' => $loggedUserId,
+            'created_at' => date('Y-m-d H:i:s')
+        ])->execute();
+    }
+
+    public static function addComment($id, $txt, $loggedUserId)
+    {
+        PostComment::insert([
+            'id_post' => $id,
+            'id_user' => $loggedUserId,
+            'created_at' => date('Y-m-d H:i:s'),
+            'body' => $txt
+        ])->execute();
     }
 
 }
